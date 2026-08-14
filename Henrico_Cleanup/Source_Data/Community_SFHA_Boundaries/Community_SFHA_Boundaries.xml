@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+    <idinfo>
+        <citation>
+            <citeinfo>
+                <title>Community_SFHA_Boundaries</title>
+                <geoform>vector digital data</geoform>
+            </citeinfo>
+        </citation>
+        <descript>
+            <abstract>This layer is used to determine the location of the County manage floodplain and whether a specificlocation is within the boundary of the inundation zone for a specific flood event.Supplemental Information:County manages floodplain with drainage areas down to 100 acres, in contrast to the FEMA floodplains,which are typically limited to drainage area down to 1 square mile (640 acres).- FEMA floodplain is generally ≥ 1 square mile (640 acres)- Henrico County is generally ≥ 100 acres and Definitions: Special Flood Hazard Area (SFHA)o High risk area subject to flooding by the 1% annual chance flood identified by FEMA andHenrico County. 100‐Year Flood (Base Flood)o The 1% annual chance flood. The flood that has a 1% chance of being equaled orexceeded in any given year. Base Flood Elevation (BFE)o The water surface elevation of the 1% annual chance flood.Attributes: FLD_ZONEo Flood zone designation used by County to designate a Special Flood Hazard Area (SFHA).o Zones: ASpecial Flood Hazard Area (SFHA) subject to inundation by the 1% annual chanceflood event. No base flood elevations determined. AESpecial Flood Hazard Area (SFHA) subject to inundation by the 1% annual chanceflood event. Base flood elevations (BFE) determined. XAreas determined to be outside the 0.2% annual chance floodplain. FLOODWAYo A "Regulatory Floodway" means the channel of a river or other watercourse and the adjacent land areas that must be reserved in order to discharge the base flood without cumulatively increasing the water surface elevation more than a designated height. Y – Yes; in floodway N – No; not in floodway</abstract>
+            <purpose>The County Floodplain layer shows the boundary of the County managed floodplain.</purpose>
+        </descript>
+        <spdom>
+            <bounding>
+                <westbc>-77.663519</westbc>
+                <eastbc>-77.173245</eastbc>
+                <northbc>37.714672</northbc>
+                <southbc>37.352308</southbc>
+            </bounding>
+        </spdom>
+        <keywords>
+            <theme>
+                <themekt>None</themekt>
+                <themekey>REQUIRED: Common-use word or phrase used to describe the subject of the data set.</themekey>
+            </theme>
+        </keywords>
+        <accconst>None</accconst>
+        <useconst/>
+        <datacred/>
+        <native>Esri ArcGIS 13.5.2.57366</native>
+    </idinfo>
+    <spdoinfo>
+        <direct>Vector</direct>
+        <ptvctinf>
+            <sdtsterm>
+                <sdtstype>GT-polygon composed of chains</sdtstype>
+                <ptvctcnt>0</ptvctcnt>
+            </sdtsterm>
+        </ptvctinf>
+    </spdoinfo>
+    <eainfo>
+        <detailed>
+            <enttyp>
+                <enttypl>Community_SFHA_Boundaries</enttypl>
+            </enttyp>
+            <attr>
+                <attrlabl>OBJECTID</attrlabl>
+                <attrdef>Internal feature number.</attrdef>
+                <attrdefs>Esri</attrdefs>
+                <attrdomv>
+                                                                                					
+          
+          
+                    
+                    
+                    <udom>Sequential unique whole numbers that are automatically generated.</udom>
+                                                                                				
+        
+        
+                
+                
+                </attrdomv>
+            </attr>
+            <attr>
+                <attrlabl>FLD_ZONE</attrlabl>
+            </attr>
+            <attr>
+                <attrlabl>SHAPE</attrlabl>
+                <attrdef>Feature geometry.</attrdef>
+                <attrdefs>ESRI</attrdefs>
+                <attrdomv>
+                                                                                					
+          
+          
+                    
+                    
+                    <udom>Coordinates defining the features.</udom>
+                                                                                				
+        
+        
+                
+                
+                </attrdomv>
+            </attr>
+            <attr>
+                <attrlabl>Shape_Length</attrlabl>
+                <attrdef>Length of feature in internal units.</attrdef>
+                <attrdefs>Esri</attrdefs>
+                <attrdomv>
+                                                                                					
+          
+          
+                    
+                    
+                    <udom>Positive real numbers that are automatically generated.</udom>
+                                                                                				
+        
+        
+                
+                
+                </attrdomv>
+            </attr>
+            <attr>
+                <attrlabl>Shape_Area</attrlabl>
+                <attrdef>Area of feature in internal units squared.</attrdef>
+                <attrdefs>Esri</attrdefs>
+                <attrdomv>
+                                                                                					
+          
+          
+                    
+                    
+                    <udom>Positive real numbers that are automatically generated.</udom>
+                                                                                				
+        
+        
+                
+                
+                </attrdomv>
+            </attr>
+        </detailed>
+    </eainfo>
+    <metainfo>
+        <metd>20260106</metd>
+        <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+        <metstdv>FGDC-STD-001-1998</metstdv>
+        <mettc>local time</mettc>
+    </metainfo>
+</metadata>
