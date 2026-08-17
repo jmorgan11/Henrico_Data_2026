@@ -8,7 +8,7 @@ Description: This script contains configuration settings for the project,
 """
 import os
 
-DATABASE_PATH = r'C:\GIS\Henrico\Henrico_Data_2026\Henrico_2026\Henrico_2026.gdb'
+DATABASE_PATH = r'C:\GIS\Henrico\Henrico_Data_2026\arcgis_pro\Henrico_2026.gdb'
 
 BUILDINGS = os.path.join(DATABASE_PATH, 'buildings_2025')
 COMMUNITY_FLOODING = os.path.join(DATABASE_PATH, 'community_sfha_boundaries')
