@@ -6,7 +6,6 @@ Description: This script runs a series of queries against a database to gather i
              parcels and buildings in relation to FEMA SFHA and Community Floodplain areas. 
              The results are printed in a structured format for analysis.
 """
-from parcels_outside_fema_sfha import main as parcels_in_county_main
 from config import BUILDINGS, COUNTY_BOUNDARY, TAX_PARCELS
 
 def main():

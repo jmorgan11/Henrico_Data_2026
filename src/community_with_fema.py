@@ -7,6 +7,7 @@ Description: This script contains queries related to datasets that have communit
 from collections import OrderedDict
 import arcpy
 from config import BUILDINGS, TAX_PARCELS
+import sys
 
 QUERY_DICT = OrderedDict([
     ("Parcels that have Community Floodplain but are already in FEMA SFHA (Potential No Change)", 0),
