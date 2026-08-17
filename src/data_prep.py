@@ -8,7 +8,14 @@ Description: This script prepares the data for analysis by performing necessary 
 """
 import sys
 import arcpy
-from config import BUILDINGS, FEMA_FLOODING, COUNTY_BOUNDARY, COMMUNITY_FLOODING, FEMA_COMM_FLOODING
+from config import BUILDINGS, FEMA_FLOODING, COUNTY_BOUNDARY, COMMUNITY_FLOODING, TAX_PARCELS, PREVIOUS_COMMUNITY_FLOODING
+
+NEW_FIELDS = [
+    ('sq_ft', 'DOUBLE', 0),
+    ('fema_sfha', 'TEXT', 1),
+    ('community_flooding', 'TEXT', 1),
+    ('previous_community_flooding', 'TEXT', 1)
+]
 
 def calc_square_footage(dataset):
     """
@@ -18,10 +25,6 @@ def calc_square_footage(dataset):
     dataset (str): Path to the polygon dataset for which to calculate square footage.
     """
     try:
-        # Add a new field for square footage if it doesn't exist
-        if 'sq_ft' not in [f.name for f in arcpy.ListFields(dataset)]:
-            arcpy.AddField_management(dataset, 'sq_ft', 'DOUBLE')
-
         # Calculate square footage
         arcpy.CalculateField_management(dataset, 'sq_ft', '!SHAPE.area!', 'PYTHON3')
 
@@ -96,8 +99,90 @@ def merge_flooding_datasets(fema_sfha, community_flooding, out_flooding):
         print(arcpy.GetMessages())
         sys.exit(1)
 
+def add_fields(dataset, fields):
+    """
+    Add fields to a dataset.
 
-def main(buildings, fema_sfha, county_boundary, community_flooding, out_flooding):
+    Parameters:
+    dataset (str): Path to the dataset to which fields will be added.
+    fields (list): List of tuples containing field names and types.
+    """
+    try:
+        for field_name, field_type, field_length in fields:
+            if field_name not in [f.name for f in arcpy.ListFields(dataset)]:
+                if field_type == 'TEXT':
+                    arcpy.AddField_management(dataset,
+                                              field_name,
+                                              field_type,
+                                              field_length=field_length)
+                else:
+                    arcpy.AddField_management(dataset, field_name, field_type)
+
+            # Calculate the field
+            if field_name != 'sq_ft':
+                arcpy.CalculateField_management(dataset, field_name, "'F'", 'PYTHON3')
+            else:
+                arcpy.CalculateField_management(dataset, field_name, "-9999", 'PYTHON3')
+
+    except arcpy.ExecuteError:
+        print(arcpy.GetMessages())
+        sys.exit(1)
+
+def calculate_flooding_fields(dataset, fema_sfha, community_flooding, previous_community_flooding):
+    """
+    Calculate the FEMA and Community Flooding fields for a dataset.
+
+    Parameters:
+    dataset (str): Path to the dataset for which to calculate flooding fields.
+    fema_sfha (str): Path to the FEMA SFHA feature class.
+    community_flooding (str): Path to the Community Flooding feature class. 
+    previous_community_flooding (str): Path the previous Community Flooding feature class.
+    """
+    try:
+        # Remove the dataset layer if it already exists
+        if arcpy.Exists('dataset_lyr'):
+            arcpy.Delete_management('dataset_lyr')
+        arcpy.MakeFeatureLayer_management(dataset, 'dataset_lyr')            
+
+        # Select features that intersect with FEMA SFHA
+        selected_fema = arcpy.SelectLayerByLocation_management(
+            'dataset_lyr', 
+            "INTERSECT", 
+            fema_sfha,
+            selection_type="NEW_SELECTION"
+        )
+        # Calculate fema sfa field
+        arcpy.CalculateField_management(selected_fema, 'fema_sfha', "'T'", 'PYTHON3')
+
+        # Select features that intersect with Community Flooding
+        selected_community = arcpy.SelectLayerByLocation_management(
+            'dataset_lyr', 
+            "INTERSECT",    
+            community_flooding,
+            selection_type="NEW_SELECTION"
+        )
+
+        # Calculate community_flooding field
+        arcpy.CalculateField_management(selected_community, 'community_flooding', "'T'", 'PYTHON3')
+
+        # Select features that intersect with Previous Community Flooding
+        selected_community = arcpy.SelectLayerByLocation_management(
+            'dataset_lyr', 
+            "INTERSECT",    
+            previous_community_flooding,
+            selection_type="NEW_SELECTION"
+        )
+
+        # Calculate previous_community_flooding field
+        arcpy.CalculateField_management(selected_community, 'previous_community_flooding', "'T'", 'PYTHON3')        
+
+        
+
+    except arcpy.ExecuteError:
+        print(arcpy.GetMessages())
+        sys.exit(1)
+
+def main(buildings, fema_sfha, county_boundary, community_flooding, parcels, previous_community_flooding):
     """
     Main function to prepare the data for analysis.
 
@@ -106,8 +191,14 @@ def main(buildings, fema_sfha, county_boundary, community_flooding, out_flooding
     fema_sfha (str): Path to the FEMA SFHA feature class.
     county_boundary (str): Path to the county boundary feature class.
     community_flooding (str): Path to the Community Flooding feature class.
-    out_flooding (str): Path to the output merged flooding feature class.
-    """
+    parcels (str): Path to the tax parcels feature class.    
+    previous_community_flooding (str): Path the previous community flooding feature class"""
+
+    # Add fields to the buildings and parcels datasets
+    for dataset in [buildings, parcels]:
+        print(f"Adding fields to dataset: {dataset}")
+        add_fields(dataset, NEW_FIELDS)
+
     # Calculate square footage for the buildings dataset
     print(f"Calculating square footage for buildings dataset: {buildings}")
     calc_square_footage(buildings)
@@ -116,13 +207,14 @@ def main(buildings, fema_sfha, county_boundary, community_flooding, out_flooding
     print("Removing non-FEMA SFHA flood polygons")
     remove_non_sfha_flooding(fema_sfha)
 
-    # Merge FEMA SFHA and Community Flooding datasets
-    print("Merging FEMA SFHA and Community Flooding datasets")
-    merge_flooding_datasets(fema_sfha, community_flooding, out_flooding=out_flooding)
-
     # Remove buildings outside the county boundary
     print("Removing buildings outside the county boundary")
     remove_buildings_outside_county(buildings, county_boundary)
+
+    # Calculate FEMA and Community Flooding fields for the buildings and parcels datasets
+    for dataset in [buildings, parcels]:
+        print(f"Calculating FEMA and Community Flooding fields for dataset: {dataset}")
+        calculate_flooding_fields(dataset, fema_sfha, community_flooding, previous_community_flooding)
 
 if __name__ == "__main__":
     main(
@@ -130,4 +222,5 @@ if __name__ == "__main__":
         fema_sfha=FEMA_FLOODING,
         county_boundary=COUNTY_BOUNDARY,
         community_flooding=COMMUNITY_FLOODING,
-        out_flooding=FEMA_COMM_FLOODING)
+        previous_community_flooding=PREVIOUS_COMMUNITY_FLOODING,
+        parcels=TAX_PARCELS)
