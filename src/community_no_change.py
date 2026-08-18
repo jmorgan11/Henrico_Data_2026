@@ -17,8 +17,8 @@ QUERY_DICT = OrderedDict([
     ("Buildings who's only new condition is no change to "
     "the Community Floodplain (No Change Only)", 0),
 
-    ("Buildings who's only new condition is no change "
-    "to the Community Floodplain (No Change Only) > 600 square feet", 0)
+    ("Buildings who's only new condition is no change to the "
+    "Community Floodplain (No Change Only) > 600 square feet", 0)
 ])
 
 def main(parcels, buildings):
@@ -66,8 +66,8 @@ def main(parcels, buildings):
             "community_flooding = 'T' And " \
             "sq_ft >= 600")
 
-        QUERY_DICT["Buildings who's only new condition is no change" \
-        "to the Community Floodplain (No Change Only) > 600 square feet"] = \
+        QUERY_DICT["Buildings who's only new condition is no change to the " \
+        "Community Floodplain (No Change Only) > 600 square feet"] = \
             int(arcpy.GetCount_management(in_rows=selected).getOutput(0))
 
     except arcpy.ExecuteError:

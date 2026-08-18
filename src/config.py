@@ -17,3 +17,5 @@ COUNTY_BOUNDARY = os.path.join(DATABASE_PATH, 'county_boundary')
 FEMA_FLOODING = os.path.join(DATABASE_PATH, 'fema_s_fld_haz_ar')
 FEMA_COMM_FLOODING = os.path.join(DATABASE_PATH, 'fema_comm_fld_haz_ar')
 TAX_PARCELS = os.path.join(DATABASE_PATH, 'Tax_Parcels_and_CAMA_Data_Internal')
+
+OUT_PATH = r'C:\GIS\Henrico\Henrico_Data_2026\outputs'

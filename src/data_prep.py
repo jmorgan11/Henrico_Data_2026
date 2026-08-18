@@ -8,7 +8,8 @@ Description: This script prepares the data for analysis by performing necessary 
 """
 import sys
 import arcpy
-from config import BUILDINGS, FEMA_FLOODING, COUNTY_BOUNDARY, COMMUNITY_FLOODING, TAX_PARCELS, PREVIOUS_COMMUNITY_FLOODING
+from config import BUILDINGS, FEMA_FLOODING, COUNTY_BOUNDARY
+from config import COMMUNITY_FLOODING, TAX_PARCELS, PREVIOUS_COMMUNITY_FLOODING
 
 NEW_FIELDS = [
     ('sq_ft', 'DOUBLE', 0),
@@ -142,7 +143,7 @@ def calculate_flooding_fields(dataset, fema_sfha, community_flooding, previous_c
         # Remove the dataset layer if it already exists
         if arcpy.Exists('dataset_lyr'):
             arcpy.Delete_management('dataset_lyr')
-        arcpy.MakeFeatureLayer_management(dataset, 'dataset_lyr')            
+        arcpy.MakeFeatureLayer_management(dataset, 'dataset_lyr')
 
         # Select features that intersect with FEMA SFHA
         selected_fema = arcpy.SelectLayerByLocation_management(
@@ -174,15 +175,16 @@ def calculate_flooding_fields(dataset, fema_sfha, community_flooding, previous_c
         )
 
         # Calculate previous_community_flooding field
-        arcpy.CalculateField_management(selected_community, 'previous_community_flooding', "'T'", 'PYTHON3')        
-
-        
+        arcpy.CalculateField_management(selected_community,
+                                        'previous_community_flooding', 
+                                        "'T'", 'PYTHON3')
 
     except arcpy.ExecuteError:
         print(arcpy.GetMessages())
         sys.exit(1)
 
-def main(buildings, fema_sfha, county_boundary, community_flooding, parcels, previous_community_flooding):
+def main(buildings, fema_sfha, county_boundary, community_flooding,
+         parcels, previous_community_flooding):
     """
     Main function to prepare the data for analysis.
 
@@ -214,7 +216,9 @@ def main(buildings, fema_sfha, county_boundary, community_flooding, parcels, pre
     # Calculate FEMA and Community Flooding fields for the buildings and parcels datasets
     for dataset in [buildings, parcels]:
         print(f"Calculating FEMA and Community Flooding fields for dataset: {dataset}")
-        calculate_flooding_fields(dataset, fema_sfha, community_flooding, previous_community_flooding)
+        calculate_flooding_fields(dataset, fema_sfha,
+                                  community_flooding,
+                                  previous_community_flooding)
 
 if __name__ == "__main__":
     main(
