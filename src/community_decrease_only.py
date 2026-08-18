@@ -2,7 +2,8 @@
 Script Name: community_decrease_only.py
 Author: Jesse Morgan
 Date: 2024-06-19
-Description: This script contains queries related to datasets where the community flooding increased
+Description: This script contains queries related to datasets where the 
+             community flooding decreased only.
 """
 from collections import OrderedDict
 import sys
