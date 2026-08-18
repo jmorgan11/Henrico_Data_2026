@@ -19,7 +19,7 @@ QUERY_DICT = OrderedDict([
 
 def main(parcels, buildings):
     """
-    Main function to execute queries related to datasets with increasing community flooding.
+    Main function to execute queries related to datasets with decreasing community flooding only.
 
     Parameters:
     parcels (str): Path to the parcels feature class.
