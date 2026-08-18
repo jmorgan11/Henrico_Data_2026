@@ -83,6 +83,20 @@ def main():
         write_rows(writer, overlap_com_fema.main(parcels=TAX_PARCELS,
                                                     buildings=BUILDINGS))
 
+        # Iterate through the magistrates
+        for magistrate in ['Brookland', 'Tuckahoe', 'Fairfield', 'Varina', 'Three Chopt']:
+            # Community Increase Queries
+            writer.writerow([magistrate, ""])
+            write_rows(writer, community_increase.main(parcels=TAX_PARCELS,
+                                                       buildings=BUILDINGS,
+                                                       magistrate=magistrate))
+
+            # Community Decrease Only Queries
+            write_rows(writer, community_decrease_only.main(parcels=TAX_PARCELS,
+                                                            buildings=BUILDINGS,
+                                                            magistrate=magistrate))
+
+
 
 if __name__ == "__main__":
     main()
