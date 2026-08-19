@@ -84,7 +84,7 @@ def dataset_queries(dataset, prefix):
                 selection_type="NEW_SELECTION",
                 where_clause="fema_sfha = 'F' AND community_flooding = 'F' AND sq_ft > 600")
 
-            QUERY_DICT[f"{prefix} outside the FEMA SFHA and the" +
+            QUERY_DICT[f"{prefix} outside the FEMA SFHA and the " +
                        "Community Floodplain > 600 square feet"] = \
                 int(arcpy.GetCount_management(in_rows=selected).getOutput(0))
 
