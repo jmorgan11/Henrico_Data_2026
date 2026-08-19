@@ -10,11 +10,14 @@ import os
 import csv
 from config import BUILDINGS, COUNTY_BOUNDARY, TAX_PARCELS, OUT_PATH
 import community_decrease_only
+import community_decrease
+import community_increase_only
 import community_increase
+import community_no_change_only
 import community_no_change
 import data_outside_flooding
 import data_within_flooding
-import new_community_increase
+import new_community_flooding
 import overlap_com_fema
 import parcels_in_county
 
@@ -67,21 +70,25 @@ def main():
         write_rows(writer, community_increase.main(parcels=TAX_PARCELS,
                                                    buildings=BUILDINGS))
 
-        # New Community increase Queries
-        write_rows(writer, new_community_increase.main(parcels=TAX_PARCELS,
+        # New Community flooding Queries
+        write_rows(writer, new_community_flooding.main(parcels=TAX_PARCELS,
                                                        buildings=BUILDINGS))
+
+        # Community Decrease Only Queries
+        write_rows(writer, community_increase_only.main(parcels=TAX_PARCELS,
+                                                        buildings=BUILDINGS))
 
         # Community Decrease Only Queries
         write_rows(writer, community_decrease_only.main(parcels=TAX_PARCELS,
                                                         buildings=BUILDINGS))
 
         # Community No Changes Queries
-        write_rows(writer, community_no_change.main(parcels=TAX_PARCELS,
+        write_rows(writer, community_no_change_only.main(parcels=TAX_PARCELS,
                                                     buildings=BUILDINGS))
 
         # Parcels and buildings with overlapping community and FEMA flooding.
         write_rows(writer, overlap_com_fema.main(parcels=TAX_PARCELS,
-                                                    buildings=BUILDINGS))
+                                                 buildings=BUILDINGS))
 
         # Iterate through the magistrates
         for magistrate in ['Brookland', 'Tuckahoe', 'Fairfield', 'Varina', 'Three Chopt']:
@@ -91,10 +98,25 @@ def main():
                                                        buildings=BUILDINGS,
                                                        magistrate=magistrate))
 
-            # Community Decrease Only Queries
-            write_rows(writer, community_decrease_only.main(parcels=TAX_PARCELS,
-                                                            buildings=BUILDINGS,
-                                                            magistrate=magistrate))
+            # Community Decrease Queries
+            write_rows(writer, community_decrease.main(parcels=TAX_PARCELS,
+                                                       buildings=BUILDINGS,
+                                                       magistrate=magistrate))
+
+            # Community No Change Queries
+            write_rows(writer, community_no_change.main(parcels=TAX_PARCELS,
+                                                        buildings=BUILDINGS,
+                                                        magistrate=magistrate))
+
+            # New Community flooding Queries
+            write_rows(writer, new_community_flooding.main(parcels=TAX_PARCELS,
+                                                           buildings=BUILDINGS,
+                                                           magistrate=magistrate))
+
+            # Parcels and buildings with overlapping community and FEMA flooding.
+            write_rows(writer, overlap_com_fema.main(parcels=TAX_PARCELS,
+                                                     buildings=BUILDINGS,
+                                                     magistrate=magistrate))   
 
 
 
