@@ -3,7 +3,9 @@ Script Name: new_community_increase.py
 Author: Jesse Morgan
 Date: 2024-06-19
 Description: This script contains queries related to datasets 
-             where the community flooding no change.
+             where the community flooding no change. The communities
+             may also include decrease in flooding and increase
+             in flooding values.
 """
 import sys
 from collections import OrderedDict

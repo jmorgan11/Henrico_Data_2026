@@ -3,7 +3,9 @@ Script Name: community_increase_only.py
 Author: Jesse Morgan
 Date: 2024-06-19
 Description: This script contains queries related to datasets
-             where there is only an increasae in the community floodplain.
+             where there is only an increase in the community floodplain.
+             These communities will not contain flooding decrease or no 
+             change values.
 """
 import sys
 from collections import OrderedDict

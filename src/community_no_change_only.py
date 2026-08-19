@@ -4,6 +4,8 @@ Author: Jesse Morgan
 Date: 2024-06-19
 Description: This script contains queries related to datasets
              where there is no community floodplain change.
+             These communities will not contain flooding increase 
+             or flooding decrease values.
 """
 import sys
 from collections import OrderedDict
