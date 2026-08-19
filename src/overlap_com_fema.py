@@ -21,7 +21,7 @@ QUERY_DICT = OrderedDict([
     "in FEMA SFHA (Potential No Change) > 600 square feet", 0)
 ])
 
-def main(parcels, buildings):
+def main(parcels, buildings, magistrate=None):
     """
     Main function to execute queries related to datasets where 
     the community flooding and the FEMA flooding overlap.
@@ -31,11 +31,16 @@ def main(parcels, buildings):
     buildings (str): Path to the buildings feature class.
     """
     try:
+        where_clause = "com_fema_overlap = 'T'"
+
+        if magistrate:
+            where_clause += f" And magistrate = '{magistrate}'"
+
         # Parcels with overlapping community and FEMA flooding
         selected = arcpy.SelectLayerByAttribute_management(
             in_layer_or_view=parcels,
             selection_type="NEW_SELECTION",
-            where_clause="com_fema_overlap = 'T'")
+            where_clause=where_clause)
 
         QUERY_DICT["Parcels that have Community Floodplain but are " \
         "already in FEMA SFHA (Potential No Change)"] = \
@@ -45,7 +50,7 @@ def main(parcels, buildings):
         selected = arcpy.SelectLayerByAttribute_management(
             in_layer_or_view=buildings,
             selection_type="NEW_SELECTION",
-            where_clause="com_fema_overlap = 'T'")
+            where_clause=where_clause)
 
         QUERY_DICT["Buildings  in Community Floodplain but are " \
         "already in FEMA SFHA (Potential No Change)"] = \
@@ -55,7 +60,7 @@ def main(parcels, buildings):
         selected = arcpy.SelectLayerByAttribute_management(
             in_layer_or_view=buildings,
             selection_type="NEW_SELECTION",
-            where_clause="com_fema_overlap = 'T' And sq_ft >= 600")
+            where_clause=where_clause + " And sq_ft >= 600")
 
         QUERY_DICT["Buildings  in Community Floodplain but are already in " \
         "FEMA SFHA (Potential No Change) > 600 square feet"] = \
@@ -68,7 +73,7 @@ def main(parcels, buildings):
     return QUERY_DICT
 
 if __name__ == '__main__':
-    result = main(parcels=TAX_PARCELS, buildings=BUILDINGS)
+    result = main(parcels=TAX_PARCELS, buildings=BUILDINGS, magistrate=None)
 
     for key, value in result.items():
         print(f"{key}: {value}")
