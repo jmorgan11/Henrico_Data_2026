@@ -15,7 +15,11 @@ NEW_FIELDS = [
     ('sq_ft', 'DOUBLE', 0),
     ('fema_sfha', 'TEXT', 1),
     ('community_flooding', 'TEXT', 1),
-    ('previous_community_flooding', 'TEXT', 1)
+    ('previous_community_flooding', 'TEXT', 1),
+    ('com_decrease', 'TEXT', 1),
+    ('com_increase', 'TEXT', 1),
+    ('com_no_change', 'TEXT', 1),
+    ('com_fema_overlap', 'TEXT', 1),
 ]
 
 def calc_square_footage(dataset):
