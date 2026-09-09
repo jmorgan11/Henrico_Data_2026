@@ -70,6 +70,10 @@ def main():
         write_rows(writer, community_increase.main(parcels=TAX_PARCELS,
                                                    buildings=BUILDINGS))
 
+         # Community Decrease Queries
+        write_rows(writer, community_decrease.main(parcels=TAX_PARCELS,
+                                                   buildings=BUILDINGS))
+
         # New Community flooding Queries
         write_rows(writer, new_community_flooding.main(parcels=TAX_PARCELS,
                                                        buildings=BUILDINGS))

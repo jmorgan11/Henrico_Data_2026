@@ -3,7 +3,8 @@ Script Name: new_community_increase.py
 Author: Jesse Morgan
 Date: 2024-06-19
 Description: This script contains queries related to datasets 
-             where the community flooding decreased.  The communities
+             where the community flooding decreased where there
+             was previous flooding.  The communities
              may also include increase in flooding and no change
              in flooding values.
 """
@@ -21,7 +22,7 @@ QUERY_DICT = OrderedDict([
 
 def main(parcels, buildings, magistrate=None):
     """
-    Main function to execute queries related to datasets with increasing community flooding.
+    Main function to execute queries related to datasets with decreasing community flooding.
 
     Parameters:
     parcels (str): Path to the parcels feature class.
@@ -29,7 +30,7 @@ def main(parcels, buildings, magistrate=None):
     magistrate (str: Optional): The magistrate name to query on.
     """
     try:
-        where_clause = "com_decrease = 'T'"
+        where_clause = "(com_decrease = 'T' And com_increase = 'F' And com_no_change = 'T') And community_flooding = 'T'"
 
         if magistrate:
             where_clause += f" And magistrate = '{magistrate}'"
@@ -43,7 +44,7 @@ def main(parcels, buildings, magistrate=None):
         QUERY_DICT["Parcels with decreasing Community Floodplains"] = \
             int(arcpy.GetCount_management(in_rows=selected).getOutput(0))
 
-        # Buildings with increasing community flooding
+        # Buildings with decreasing community flooding
         selected = arcpy.SelectLayerByAttribute_management(
             in_layer_or_view=buildings,
             selection_type="NEW_SELECTION",
@@ -52,7 +53,7 @@ def main(parcels, buildings, magistrate=None):
         QUERY_DICT["Buildings with decreasing Community Floodplains"] = \
             int(arcpy.GetCount_management(in_rows=selected).getOutput(0))
 
-        # Buildings with increasing community flooding and > 600 square feet
+        # Buildings with decreasing community flooding and > 600 square feet
         selected = arcpy.SelectLayerByAttribute_management(
             in_layer_or_view=buildings,
             selection_type="NEW_SELECTION",
