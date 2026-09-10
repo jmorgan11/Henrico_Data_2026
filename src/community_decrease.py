@@ -70,7 +70,7 @@ def main(parcels, buildings, magistrate=None):
     return QUERY_DICT
 
 if __name__ == '__main__':
-    result = main(parcels=TAX_PARCELS, buildings=BUILDINGS, magistrate=None)
+    result = main(parcels=TAX_PARCELS, buildings=BUILDINGS, magistrate="Brookland")
 
     for key, value in result.items():
         print(f"{key}: {value}")

@@ -108,14 +108,19 @@ def main():
                                                        magistrate=magistrate))
 
             # Community No Change Queries
-            write_rows(writer, community_no_change.main(parcels=TAX_PARCELS,
-                                                        buildings=BUILDINGS,
-                                                        magistrate=magistrate))
+            write_rows(writer, community_no_change_only.main(parcels=TAX_PARCELS,
+                                                             buildings=BUILDINGS,
+                                                             magistrate=magistrate))
 
             # New Community flooding Queries
             write_rows(writer, new_community_flooding.main(parcels=TAX_PARCELS,
                                                            buildings=BUILDINGS,
                                                            magistrate=magistrate))
+
+            # Community Decrease Only Queries
+            write_rows(writer, community_decrease_only.main(parcels=TAX_PARCELS,
+                                                            buildings=BUILDINGS,
+                                                            magistrate=magistrate))            
 
             # Parcels and buildings with overlapping community and FEMA flooding.
             write_rows(writer, overlap_com_fema.main(parcels=TAX_PARCELS,
