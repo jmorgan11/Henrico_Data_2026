@@ -74,21 +74,21 @@ def main():
         write_rows(writer, community_decrease.main(parcels=TAX_PARCELS,
                                                    buildings=BUILDINGS))
 
+        # Community No Changes Queries
+        write_rows(writer, community_no_change_only.main(parcels=TAX_PARCELS,
+                                                    buildings=BUILDINGS))        
+
         # New Community flooding Queries
         write_rows(writer, new_community_flooding.main(parcels=TAX_PARCELS,
                                                        buildings=BUILDINGS))
 
-        # Community Decrease Only Queries
-        write_rows(writer, community_increase_only.main(parcels=TAX_PARCELS,
-                                                        buildings=BUILDINGS))
+        # # Community Increase Only Queries
+        # write_rows(writer, community_increase_only.main(parcels=TAX_PARCELS,
+        #                                                 buildings=BUILDINGS))
 
         # Community Decrease Only Queries
         write_rows(writer, community_decrease_only.main(parcels=TAX_PARCELS,
                                                         buildings=BUILDINGS))
-
-        # Community No Changes Queries
-        write_rows(writer, community_no_change_only.main(parcels=TAX_PARCELS,
-                                                    buildings=BUILDINGS))
 
         # Parcels and buildings with overlapping community and FEMA flooding.
         write_rows(writer, overlap_com_fema.main(parcels=TAX_PARCELS,

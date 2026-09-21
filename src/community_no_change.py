@@ -32,7 +32,7 @@ def main(parcels, buildings, magistrate=None):
         where_clause = "com_no_change = 'T'"
 
         if magistrate:
-            where_clause += f" And magistrate = '{magistrate}'"
+            where_clause += f" And MAGISTERIA = '{magistrate}'"
 
         # Parcels with no change in community flooding
         selected = arcpy.SelectLayerByAttribute_management(

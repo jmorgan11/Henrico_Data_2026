@@ -34,7 +34,7 @@ def main(parcels, buildings, magistrate=None):
         where_clause = "com_fema_overlap = 'T'"
 
         if magistrate:
-            where_clause += f" And magistrate = '{magistrate}'"
+            where_clause += f" And MAGISTERIA = '{magistrate}'"
 
         # Parcels with overlapping community and FEMA flooding
         selected = arcpy.SelectLayerByAttribute_management(

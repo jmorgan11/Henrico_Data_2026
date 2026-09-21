@@ -31,7 +31,7 @@ def main(parcels, buildings, magistrate=None):
         where_clause = "community_flooding = 'F' And previous_community_flooding = 'T'"
 
         if magistrate:
-            where_clause += f" And magistrate = '{magistrate}'"
+            where_clause += f" And MAGISTERIA = '{magistrate}'"
 
         # Parcels with decreasing community flooding
         selected = arcpy.SelectLayerByAttribute_management(
