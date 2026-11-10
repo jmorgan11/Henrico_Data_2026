@@ -16,6 +16,7 @@ COMMUNITY_FLOODING = os.path.join(DATABASE_PATH, "community_sfha_boundaries")
 PREVIOUS_COMMUNITY_FLOODING = os.path.join(
     DATABASE_PATH, "previous_community_sfha_boundaries"
 )
+FLOOD_UNION = os.path.join(DATABASE_PATH, "prev_new_union")
 COUNTY_BOUNDARY = os.path.join(DATABASE_PATH, "county_boundary")
 FEMA_FLOODING = os.path.join(DATABASE_PATH, "fema_s_fld_haz_ar")
 FEMA_COMM_FLOODING = os.path.join(DATABASE_PATH, "fema_comm_fld_haz_ar")

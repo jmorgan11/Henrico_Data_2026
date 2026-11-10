@@ -10,7 +10,12 @@ Description: This script prepares the data for analysis by performing necessary 
 import sys
 import arcpy
 from config import BUILDINGS, FEMA_FLOODING, COUNTY_BOUNDARY
-from config import COMMUNITY_FLOODING, TAX_PARCELS, PREVIOUS_COMMUNITY_FLOODING
+from config import (
+    COMMUNITY_FLOODING,
+    TAX_PARCELS,
+    PREVIOUS_COMMUNITY_FLOODING,
+    FLOOD_UNION,
+)
 
 NEW_FIELDS = [
     ("sq_ft", "DOUBLE", 0),
@@ -195,6 +200,217 @@ def calculate_flooding_fields(
         sys.exit(1)
 
 
+def create_flood_union_dataset(old_flooding, new_flooding):
+    """
+    Create the flooding union dataset and populate the com_increase,
+    com_decrease and com_no_change fields.
+
+    Parameters:
+    dataset (str): Path to the dataset for which to calculate flooding fields.
+    old_flooding (str): Path to the old community flooding
+    new_flooding (str): Path to the new community flooding
+    """
+
+    try:
+        # Check if the output dataset already exists.  If so, delete it.
+        if arcpy.Exists(dataset=FLOOD_UNION):
+            arcpy.management.Delete(FLOOD_UNION)
+
+        # Add a 'new' field to the new community flooding and calculate it to 'T'
+        field_names = [field.name for field in arcpy.ListFields(new_flooding)]
+        if "new" not in field_names:
+            arcpy.AddField_management(
+                in_table=new_flooding,
+                field_name="new",
+                field_type="TEXT",
+                field_length=1,
+            )
+        arcpy.management.CalculateField(
+            in_table=new_flooding,
+            field="new",
+            expression="'T'",
+            expression_type="PYTHON3",
+        )
+
+        # Add a 'prev' field to the old community flooding and calculate it to 'T'
+        field_names = [field.name for field in arcpy.ListFields(old_flooding)]
+        if "prev" not in field_names:
+            arcpy.AddField_management(
+                in_table=old_flooding,
+                field_name="prev",
+                field_type="TEXT",
+                field_length=1,
+            )
+        arcpy.management.CalculateField(
+            in_table=old_flooding,
+            field="prev",
+            expression="'T'",
+            expression_type="PYTHON3",
+        )
+
+        # Perform an intersection of the old and new flooding.
+        arcpy.analysis.Union(
+            in_features=[new_flooding, old_flooding],
+            out_feature_class=FLOOD_UNION,
+            join_attributes="ALL",
+        )
+
+        # In the output dataset, add these fields and calculate them to 'F': com_increase, com_decrease, com_no_change
+        for field in ("com_increase", "com_decrease", "com_no_change"):
+            arcpy.AddField_management(
+                in_table=FLOOD_UNION,
+                field_name=field,
+                field_type="TEXT",
+                field_length=1,
+            )
+
+            arcpy.management.CalculateField(
+                in_table=FLOOD_UNION,
+                field=field,
+                expression="'F'",
+                expression_type="PYTHON3",
+            )
+
+        # Select all rows where all the 'new' values are 'T' but inverse the selection.
+        # Then, calculate these selected rows to 'F' for the 'new' column.
+        selected_rows = arcpy.management.SelectLayerByAttribute(
+            in_layer_or_view=FLOOD_UNION,
+            selection_type="NEW_SELECTION",
+            where_clause="new = 'T'",
+            invert_where_clause="INVERT",
+        )
+        arcpy.management.CalculateField(
+            in_table=selected_rows,
+            field="new",
+            expression="'F'",
+            expression_type="PYTHON3",
+        )
+
+        # Select all rows where all the 'prev' values are 'T' but inverse the selection.
+        # Then, calculate these selected rows to 'F' for the 'prev' column.
+        selected_rows = arcpy.management.SelectLayerByAttribute(
+            in_layer_or_view=FLOOD_UNION,
+            selection_type="NEW_SELECTION",
+            where_clause="prev = 'T'",
+            invert_where_clause="INVERT",
+        )
+        arcpy.management.CalculateField(
+            in_table=selected_rows,
+            field="prev",
+            expression="'F'",
+            expression_type="PYTHON3",
+        )
+
+        # Calculate the fields based on the following selections:
+        # If 'new' == 'T' and 'prev' == 'F', 'com_increase' = 'T'
+        selected_rows = arcpy.management.SelectLayerByAttribute(
+            in_layer_or_view=FLOOD_UNION,
+            selection_type="NEW_SELECTION",
+            where_clause="new = 'T' and prev = 'F'",
+        )
+        arcpy.management.CalculateField(
+            in_table=selected_rows,
+            field="com_increase",
+            expression="'T'",
+            expression_type="PYTHON3",
+        )
+
+        # If 'new' == 'F' and 'prev' == 'T', 'com_decrease' = 'T'
+        selected_rows = arcpy.management.SelectLayerByAttribute(
+            in_layer_or_view=FLOOD_UNION,
+            selection_type="NEW_SELECTION",
+            where_clause="new = 'F' and prev = 'T'",
+        )
+        arcpy.management.CalculateField(
+            in_table=selected_rows,
+            field="com_decrease",
+            expression="'T'",
+            expression_type="PYTHON3",
+        )
+
+        # If 'new' == 'T' and 'prev' == 'T', 'com_no_change' = 'T'
+        selected_rows = arcpy.management.SelectLayerByAttribute(
+            in_layer_or_view=FLOOD_UNION,
+            selection_type="NEW_SELECTION",
+            where_clause="new = 'T' and prev = 'T'",
+        )
+        arcpy.management.CalculateField(
+            in_table=selected_rows,
+            field="com_no_change",
+            expression="'T'",
+            expression_type="PYTHON3",
+        )
+
+        # Drop unneeded fields
+        keep_fields = [
+            "OBJECTID",
+            "Shape",
+            "new",
+            "prev",
+            "Shape_Length",
+            "Shape_Area",
+            "com_increase",
+            "com_decrease",
+            "com_no_change",
+        ]
+        field_name_list = [field.name for field in arcpy.ListFields(FLOOD_UNION)]
+        for field_name in field_name_list:
+            if field_name not in keep_fields:
+                arcpy.management.DeleteField(
+                    in_table=FLOOD_UNION, drop_field=field_name
+                )
+
+    except arcpy.ExecuteError:
+        print(arcpy.GetMessages())
+        sys.exit(1)
+
+
+def update_dataset_with_change_fields(dataset, union_flooding):
+    """
+    Update the parcel data using the union dataset and populate the com_increase,
+    com_decrease and com_no_change fields.
+
+    Parameters:
+    dataset (str): Path to the dataset for which to calculate flooding fields.
+    union_flooding (str): Path to the union dataset of the old and new flooding
+    """
+    # Initially calculate the fields to 'F'
+    for field_name in ["com_increase", "com_decrease", "com_no_change"]:
+        arcpy.management.CalculateField(
+            in_table=dataset,
+            field=field_name,
+            expression="'F'",
+            expression_type="PYTHON3",
+        )
+
+    # Select all the parcels that intersect the union flooding based on the
+    # change fields and update the parcel attribution
+    for field_name in ["com_increase", "com_decrease", "com_no_change"]:
+        selected_union_rows = arcpy.management.SelectLayerByAttribute(
+            in_layer_or_view=union_flooding,
+            selection_type="NEW_SELECTION",
+            where_clause=field_name + " = 'T'",
+        )
+
+        print(field_name, arcpy.management.GetCount(selected_union_rows)[0])
+
+        selected_rows = arcpy.management.SelectLayerByLocation(
+            in_layer=dataset,
+            overlap_type="INTERSECT",
+            select_features=selected_union_rows,
+            selection_type="NEW_SELECTION",
+        )
+
+        print("Intersects:", arcpy.management.GetCount(selected_rows)[0])
+
+        arcpy.management.CalculateField(
+            in_table=selected_rows,
+            field=field_name,
+            expression="'T'",
+            expression_type="PYTHON3",
+        )
+
+
 def main(
     buildings,
     fema_sfha,
@@ -238,6 +454,17 @@ def main(
         calculate_flooding_fields(
             dataset, fema_sfha, community_flooding, previous_community_flooding
         )
+
+    # Create the Old/New Union flooding dataset
+    print("Creating the union dataset of the flooding")
+    create_flood_union_dataset(
+        old_flooding=PREVIOUS_COMMUNITY_FLOODING, new_flooding=COMMUNITY_FLOODING
+    )
+
+    # Update the parcels and buildings with flooding change field data
+    for dataset in [buildings, parcels]:
+        print(f"Calculating the change fields for dataset: {dataset}")
+        update_dataset_with_change_fields(dataset=dataset, union_flooding=FLOOD_UNION)
 
 
 if __name__ == "__main__":
