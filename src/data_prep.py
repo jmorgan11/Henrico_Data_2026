@@ -29,6 +29,7 @@ NEW_FIELDS = [
 ]
 
 
+# TODO: update this to use Calculate Geometry
 def calc_square_footage(dataset):
     """
     Calculate the square footage of a polygon dataset.
